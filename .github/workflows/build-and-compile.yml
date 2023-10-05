@@ -1,0 +1,26 @@
+name: build-and-compile
+on: push
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install luamake
+        run: |
+          git clone https://github.com/actboy168/luamake
+          pushd luamake
+          git submodule init
+          git submodule update --init --recursive
+          .\compile\install.bat
+          popd
+      - name: Init submodules lua-debug
+        run: |
+          git submodule init
+          git submodule update
+      - name: Download dependencies
+        run: |
+          luamake lua compile/download_deps.lua
+      - name: Build release
+        run: |
+          luamake -mode release
